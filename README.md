@@ -1,6 +1,6 @@
 # MetaBAW
 
-MetaBAW: metagenome Binning Automated Workflow.
+MetaBAW: Metagenome Binning Automated Workflow.
 
 MetaBAW does not depend on Nextflow, Snakemake, or another workflow engine.
 Python manages the task graph, CPU-aware concurrency, logs, retries, SQLite
