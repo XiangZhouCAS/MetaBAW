@@ -1,0 +1,22 @@
+{
+  "version": "1.2",
+  "dbname": "hyddb.all.fa",
+  "dbtype": "Protein",
+  "db-version": 5,
+  "description": "hyddb.all.fa",
+  "number-of-letters": 1695512,
+  "number-of-sequences": 3260,
+  "last-updated": "2026-08-21T15:59:00",
+  "number-of-volumes": 1,
+  "bytes-total": 2068083,
+  "bytes-to-cache": 1724957,
+  "files": [
+    "hyddb.all.fa.pdb",
+    "hyddb.all.fa.phr",
+    "hyddb.all.fa.pin",
+    "hyddb.all.fa.pot",
+    "hyddb.all.fa.psq",
+    "hyddb.all.fa.ptf",
+    "hyddb.all.fa.pto"
+  ]
+}
