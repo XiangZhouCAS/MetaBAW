@@ -10,9 +10,6 @@ The workflow has three main modules:
 - `metabaw annotation`: taxonomy, MAG abundance, ecological niche classification, KEGG annotation, CAZy annotation, and hydrogen-metabolism annotation.
 - `metabaw check`: check software, runtime environments and databases.
 
-MetaBAW uses explicit sample manifests instead of inferring sample names from
-file names. This makes mixed projects and reproducible reruns easier to audit.
-
 ## Contents
 
 - [Quick start](#quick-start)
@@ -31,9 +28,7 @@ file names. This makes mixed projects and reproducible reruns easier to audit.
 ## Quick start
 
 First [install MetaBAW](#requirements-and-installation) and configure the
-[required software and databases](#dependencies-and-databases). Run analyses
-from a separate working directory, not the source-package directory. Replace
-the example paths in the manifests with paths to your own data.
+[required software and databases](#dependencies-and-databases).
 
 Run binning with the default read-type-specific binners, MAGScoT refinement,
 CheckM2 quality assessment and Galah dereplication:
@@ -49,7 +44,7 @@ metabaw bin \
 Omit `--input_contig_files` to assemble all samples from reads. In the default
 assembly strategy, samples missing from a partial contig manifest are assembled
 individually. For long reads, choose the appropriate Flye/Minimap2 input mode;
-for example, add `--nano-hq` for high-quality ONT reads.
+for example, add `--nano-hq` for high-quality ONT reads. [contig_file_style](###Optional contig manifest)
 
 After binning succeeds, create an annotation input list from the final MAGs:
 
@@ -96,11 +91,6 @@ Keep both files in the same directory and verify the wheel before installation:
 ```bash
 sha256sum -c SHA256SUMS
 ```
-
-The checksum detects changes or transfer damage; it is not a digital signature.
-The `py3-none-any` filename tag describes the pure-Python package, not support
-for every operating system or Python 3 version. This edition requires Python
-3.11 and Linux-compatible external tools.
 
 Create the main environment with Conda:
 
@@ -155,12 +145,7 @@ metabaw check --scope annotation
 metabaw check --all
 ```
 
-Use `metabaw check -h` to list database-path and environment options. The check
-command validates required software and databases and can interactively install
-supported missing components after confirmation. Installation requires network
-access and permission to create the selected environments and database paths.
-On HPC systems, prepare dependencies in an appropriate setup session before
-submitting analysis jobs; `bin` and `annotation` never prompt for installation.
+Use `metabaw check -h` to list database-path and environment options.
 
 ## Command help
 
