@@ -1,10 +1,6 @@
 # ![MetaBAW](metabaw_title_logo.png)
 
-MetaBAW (Metagenome Binning Automated Workflow) is an integrated workflow for
-building and annotating metagenome-assembled genome (MAG) datasets from
-environmental metagenomes. It supports paired-end short reads, single-file long
-reads, existing contigs, per-sample assembly, grouped coverage analysis, and
-user-defined coassembly.
+Genome-resolved metagenomics requires coordination among tools for sequence mapping, contig binning, bin refinement, genome quality assessment, dereplication and downstream analysis. Differences in software environments, input formats, parameter settings and database requirements complicate workflow implementation and reproducibility. MetaBAW addresses this practical challenge by connecting these procedures within a unified workflow that accepts quality controlled sequencing reads and optional preassembled contigs. MetaBAW offers three complementary capabilities. First, it supports both short- and long-read inputs, accommodating different sequencing platform. Second, it enables single sample assembly, multi sample processing and grouped coassembly while integrating multiple complementary binning tools. Third, it combines MAG quality control and dereplication with taxonomic assignment, abundance profiling, functional annotation and niche classification, providing coordinated outputs for genome-resolved ecological analysis.
 
 The workflow has two main modules:
 
