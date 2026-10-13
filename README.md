@@ -971,8 +971,7 @@ Download the MetaBAW-ready hydrogenase and terminal-enzyme bundle from
 [XiangZhouCAS/Hydrogenase_db](https://github.com/XiangZhouCAS/Hydrogenase_db).
 The underlying hydrogenase reference sequences originate from
 [GreeningLab/HydDB](https://github.com/GreeningLab/HydDB); credit that original
-source when using these references. The MetaBAW bundle also supplies the FeFe
-and terminal-enzyme DIAMOND databases and the hydrogenase ID-to-class mapping.
+source when using these references.
 
 The repository distributes `Terminal.dmnd.gz`. Decompress it before using
 MetaBAW, keeping the filename `Terminal.dmnd`:
@@ -995,12 +994,6 @@ The directory passed to `--hydrogenase-db` must directly contain:
 
 Keep these four files together. The workflow builds its BLAST index from
 `hyddb.all.fa` in the temporary workspace.
-
-`--install-databases` enables supported downloads for selected missing CheckM2,
-GUNC, GTDB-Tk, KOfam and dbCAN databases; it is not a universal database installer.
-Legacy CheckM data and the complete MetaBAW hydrogen-metabolism bundle must be
-supplied as existing paths. A HydDB FASTA alone is insufficient for all hydrogen
-annotations. Respect the separate licenses and terms of upstream reference data.
 
 Configure existing binning databases, then enable optional components as needed:
 
@@ -1144,23 +1137,6 @@ Resume decisions distinguish runtime resources from analysis settings:
 | Inputs, databases, mapper presets, quality thresholds, clustering options or CPU/GPU mode changed | Affected tasks and their data-dependent descendants rerun |
 | Failed/interrupted task or incomplete/missing outputs | Task reruns; files alone are not evidence of successful completion |
 | Niche method, abundance metric or `--cv-correct` changed in an annotation output directory | Startup rejects the changed configuration; use a new `-o` directory |
-
-Complete pre-existing outputs can be adopted only when the task-specific
-validation permits it. Already deleted or overwritten intermediates cannot be
-recovered. For a separate analysis, use a new output and temporary directory.
-Do not delete SQLite state to bypass validation.
-
-Invalidated successful tasks print `[RESUME INVALIDATED]`; full decisions are
-in `<tmp>/runtime/resume_diagnostics.json`. Reused logs retain the original
-commands and thread counts, not the new requested allocation.
-
-MetaDecoder coverage uses the allocated per-sample threads and fresh custom
-`.bam.index` sidecars beside private BAM links. Original BAMs, samtools `.bai`
-indexes and existing sidecars are not changed. Native coverage calculations
-retain 2,000-bp bins; worker failures and incomplete/non-finite/negative tables
-fail before publication. Versioned completion evidence prevents reuse of older
-unchecked tables. This does not repair corrupt BAM data: `samtools quickcheck`
-checks headers and EOF, not every internal block.
 
 ## Examples
 
