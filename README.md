@@ -751,14 +751,6 @@ Terminal-enzyme searches use DIAMOND against `Terminal.dmnd`, E-value <=
 
 The best qualifying terminal-enzyme hit is retained per protein; `Reference`,
 `Reference_title` and `Required_identity` expose the match and applied cutoff.
-In hydrogenase and terminal-enzyme tables, `Identity`, `FeFe_identity`,
-`Query_coverage` and `Required_identity` are fractions, not percentages:
-`0.90` means 90%. Query coverage is the aligned query-coordinate span divided
-by the query protein length. `Evalue` is the search expectation value and
-`Bitscore` is the alignment bit score; an E-value printed as zero reflects
-numerical reporting precision, not proof of exact functional identity.
-Sequence-based assignments indicate predicted potential, not experimentally
-demonstrated activity or metabolic flux.
 
 ### Annotation output
 
@@ -876,12 +868,6 @@ operations currently call Conda directly.
 | Functional annotation | Prodigal, KofamScan, run_dbCAN, BLAST+, DIAMOND | Main environment / PATH; databases listed below |
 | Supporting dependencies | HMMER (`hmmsearch`, `hmmalign`), Strobealign, Pullseq, pplacer/guppy, R and required R packages, Ruby, GNU Parallel, Bash | Required by their selected native tools; Git and build tools may also be needed for installation |
 
-These are environment requirements, not a claim that every listed tool runs in
-every analysis. Native tool/database versions depend on the installed release;
-the per-run resolved software versions and commands are recorded in
-`run_manifest.json`. Record database releases explicitly for reproducibility;
-a saved path alone is not a complete database version record.
-
 Choose isolated environments by name or absolute prefix with `check`:
 
 ```bash
@@ -902,9 +888,6 @@ MetaDecoder is tested with CuPy independently of PyTorch in the main environment
 
 ### Databases and reference assets
 
-The following paths must exist and contain usable assets, not merely empty
-directories. Use reference releases compatible with the installed native tools.
-
 `metabaw check` validates database completeness and loading for its selected
 profile and any explicitly supplied database paths. Use `--all` to include
 optional legacy CheckM and GUNC databases. An incomplete database is reported
@@ -918,16 +901,6 @@ selected modules before starting any workflow tasks, including resumed runs.
 Missing, empty, unreadable or incomplete required assets are reported as
 `[MISSING]` in the main output and recorded in `<output>/start_info.txt`; all
 detected dependency failures are collected before the command exits.
-Disabled annotation modules and reused GTDB-Tk classification results require
-only the databases still used by the selected command.
-
-Startup checks include the legacy CheckM manifest's file sizes, every KOfam
-profile referenced by a usable KO threshold, HMM file headers and terminators,
-nonempty protein sequences in the hydrogenase FASTA,
-and GTDB-Tk's installed release/marker inventory and classification reference
-packages. DIAMOND databases are opened with `diamond dbinfo`; the CheckM2 check
-uses its selected isolated environment. These checks validate required assets
-and database loading; they do not hash every byte of large reference archives.
 
 **What to pass to each option**
 
@@ -938,13 +911,13 @@ actual locations; the examples below are absolute Linux paths.
 
 | Configuration flag | Input type | Example value |
 |---|---|---|
-| `--checkm-db` | Directory: legacy CheckM data root | `/db/checkm` |
-| `--checkm2-db` | File: CheckM2 DIAMOND database; a directory containing it is also accepted | `/db/checkm2/CheckM2_database/uniref100.KO.1.dmnd` |
-| `--gunc-db` | File: GUNC DIAMOND database; a directory containing it is also accepted | `/db/gunc/gunc_db_progenomes2.1.dmnd` |
-| `--gtdbtk-db` | Directory: unpacked GTDB-Tk reference root | `/db/gtdb/release232` |
-| `--kegg-db` | Directory: KOfam root containing both `ko_list` and `profiles/` | `/db/kofam` |
-| `--dbcan-db` | Directory: run_dbCAN database root | `/db/dbcan` |
-| `--hydrogenase-db` | Directory: complete MetaBAW hydrogen-metabolism bundle | `/db/hydrogenase` |
+| `--checkm-db` | Directory | `/db/checkm` |
+| `--checkm2-db` | File: CheckM2 DIAMOND database | `/db/checkm2/CheckM2_database/uniref100.KO.1.dmnd` |
+| `--gunc-db` | File: GUNC DIAMOND database | `/db/gunc/gunc_db_progenomes2.1.dmnd` |
+| `--gtdbtk-db` | Directory: GTDB-Tk reference database | `/db/gtdb/release232` |
+| `--kegg-db` | Directory: KOfam database containing both `ko_list` and `profiles/` | `/db/kofam` |
+| `--dbcan-db` | Directory: run_dbCAN database | `/db/dbcan` |
+| `--hydrogenase-db` | Directory: hydrogen-metabolism database | `/db/hydrogenase` |
 | `--magscot-dir` | Directory: MAGScoT checkout containing its script and `hmm/` | `/opt/MAGScoT` |
 
 CheckM2 and GUNC ultimately use an individual, nonempty `.dmnd` file. When given
@@ -967,8 +940,8 @@ names and `.dmnd` filenames can vary by release; use the actual unpacked name.
 
 | Database / source | Required by | Minimum expected layout or file | Recommended download |
 |---|---|---|---|
-| Legacy CheckM reference data | Standalone CheckM and MetaWRAP | `.dmanifest`, `hmms/phylo.hmm`, `hmms/checkm.hmm`, `pfam/Pfam-A.hmm.dat`, `genome_tree/`, `distributions/`, `selected_marker_sets.tsv`, `taxon_marker_sets.tsv` | [Official CheckM data mirror](https://data.ace.uq.edu.au/public/CheckM_databases/) or [CheckM reference archive on Zenodo](https://zenodo.org/records/7401545); e.g. `checkm_data_2015_01_16.tar.gz`, extracted into the selected root |
-| CheckM2 reference database | CheckM2 | A nonempty `.dmnd` file, e.g. `uniref100.KO.1.dmnd` | [Official CheckM2 database instructions](https://github.com/chklovski/CheckM2#database) and [reference database v1.1.0 on Zenodo](https://zenodo.org/records/14897628); use the release matching your CheckM2 version |
+|CheckM| Standalone CheckM and MetaWRAP | `.dmanifest`, `hmms/phylo.hmm`, `hmms/checkm.hmm`, `pfam/Pfam-A.hmm.dat`, `genome_tree/`, `distributions/`, `selected_marker_sets.tsv`, `taxon_marker_sets.tsv` | [Official CheckM data mirror](https://data.ace.uq.edu.au/public/CheckM_databases/) or [CheckM reference archive on Zenodo](https://zenodo.org/records/7401545); e.g. `checkm_data_2015_01_16.tar.gz`, extracted into the selected root |
+| CheckM2| CheckM2 | A nonempty `.dmnd` file, e.g. `uniref100.KO.1.dmnd` | [Official CheckM2 database instructions](https://github.com/chklovski/CheckM2#database) and [reference database v1.1.0 on Zenodo](https://zenodo.org/records/14897628); use the release matching your CheckM2 version |
 | GUNC reference database | GUNC | A nonempty `.dmnd` file, e.g. `gunc_db_progenomes2.1.dmnd` | [Official GUNC download instructions](https://grp-bork.embl-community.io/gunc/installation.html#download-gunc-db) or [proGenomes 2.1 reference archive on Zenodo](https://zenodo.org/records/19631736); unpack `gunc_db_progenomes2.1.dmnd.gz` if downloaded manually |
 | GTDB-Tk reference package | Taxonomy and RNA domain identification | `metadata/metadata.txt`, `taxonomy/gtdb_taxonomy.tsv`, `markers/`, `masks/`, `msa/`, `pplacer/`, `radii/` and ANI assets; new classification additionally requires `skani/` and `mrca_red/` | [Official GTDB-Tk reference instructions and compatibility table](https://ecogenomics.github.io/GTDBTk/installing/index.html#gtdb-tk-reference-data) and [R232 full-package download directory](https://data.gtdb.ecogenomic.org/releases/release232/232.0/auxillary_files/gtdbtk_package/full_package/); MetaBAW's GTDB-Tk 2.7.2 profile uses R232 |
 | KEGG KOfam profiles and KO list | KofamScan | `ko_list`, nonempty `profiles/`, and usable `K.descript.txt` (locally derivable from `ko_list`) | [Official KOfam downloads](https://www.genome.jp/ftp/db/kofam/): [profiles.tar.gz](https://www.genome.jp/ftp/db/kofam/profiles.tar.gz) and [ko_list.gz](https://www.genome.jp/ftp/db/kofam/ko_list.gz) |
