@@ -44,7 +44,8 @@ metabaw bin \
 Omit `--input_contig_files` to assemble all samples from reads. In the default
 assembly strategy, samples missing from a partial contig manifest are assembled
 individually. For long reads, choose the appropriate Flye/Minimap2 input mode;
-for example, add `--nano-hq` for high-quality ONT reads. [contig_file_style](#optional-contig-manifest)
+for example, add `--nano-hq` for high-quality ONT reads.
+
 
 After binning succeeds, create an annotation input list from the final MAGs:
 
@@ -186,8 +187,7 @@ L1	/data/reads/L1.fastq.gz
 - Supported extensions are `.fastq`, `.fq`, `.fastq.gz`, and `.fq.gz`.
 - Paired files may use different compression formats.
 - Sample names must be unique and begin with a letter or digit. Subsequent
-  characters may be letters, digits, dots, underscores or hyphens; `__mbw_`
-  is reserved for internal identifiers.
+  characters may be letters, digits, dots, underscores or hyphens.
 - A one-file entry is not interpreted as single-end short reads. Do not combine
   short and long reads into one entry to request hybrid assembly; this edition
   distinguishes read type by the number of input files.
@@ -293,7 +293,7 @@ Existing contigs can be supplied explicitly:
 metabaw bin \
   --input_reads_files reads.tsv \
   --input_contig_files contigs.tsv \
-  --tools metabat2 metadecoder vamb comebin semibin2 lorbin \
+  --tools metabat2 metadecoder vamb comebin semibin2 \
   --refinement magscot \
   --quality-control checkm2 \
   --gunc --trna --rrna \
