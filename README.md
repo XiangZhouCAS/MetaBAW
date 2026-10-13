@@ -367,7 +367,7 @@ Important binning options include:
 | `--quality-control` | `checkm2` or `checkm` | `checkm2` |
 | `--con` | Final QC maximum contamination (%) | `10` |
 | `--com` | Final QC minimum completeness (%) | `50` |
-| `--quality-score` | Minimum completeness - 5 x contamination | not set |
+| `--quality-score` | Minimum completeness (%) - 5 x contamination (%) | not set |
 | `--dereplication-tool` | `galah` or `drep` | `galah` |
 | `--ani` | Dereplication ANI (%) | `99` |
 | `--min-aligned-fraction` | Minimum aligned fraction (%) | `30` |
@@ -385,9 +385,7 @@ Bowtie2 cannot process long-read entries, and miniBWA cannot process paired
 short-read entries. For mixed projects, omit `--align-tool` for per-sample
 defaults or use Minimap2. `--environment` selects a SemiBin2 model, not a Conda
 environment. `--tag-contigs` runs after dereplication (`07.tag_contigs`); it does
-not change the preparation, mapping or binning contig IDs. Expert arguments
-can affect analysis behavior and checkpoint reuse; inspect the generated
-commands in `run_manifest.json` and do not override managed resources or paths.
+not change the preparation, mapping or binning contig IDs.
 
 MetaWRAP accepts results from at most three applicable binning tools per
 analysis. For example, use `--tools metadecoder vamb semibin2 --refinement
@@ -560,9 +558,8 @@ were missing. A missing or invalid description file remains an error.
 ### Taxonomy and abundance
 
 GTDB-Tk species placement is enabled by default and can be disabled with
-`--no-place-species`, the only public species-placement switch. Omit it to
-request placement; `--place-species` is no longer accepted by
-`metabaw annotation`. A complete existing GTDB-Tk result can be reused with:
+`--no-place-species`, the only public species-placement switch.
+A complete existing GTDB-Tk result can be reused with:
 
 ```bash
 --gtdbtk_res /path/to/gtdbtk_result
@@ -581,10 +578,6 @@ Additional annotation controls include:
 | `--retries` | Retries after an eligible task failure | `0` |
 | `--no-niche` | Disable niche classification | off |
 | `--no-kegg`, `--no-cazy`, `--no-hyd` | Disable the corresponding functional branches | off |
-
-GTDB-Tk's pplacer scratch remains in the workflow workspace even when its IPC
-temporary parent is changed. Use a short local IPC path to avoid Unix socket
-path-length and network-filesystem issues.
 
 Supported abundance methods are:
 
@@ -606,7 +599,7 @@ metrics, not direct measurements of transcription. Only requested methods have
 individual output matrices. A CoverM `unmapped` row is not a MAG and must be
 excluded from genome counts.
 
-### Ecological niche classification
+### Niche classification
 
 Niche classification runs only when the analysis contains at least four MAGs
 and four read samples. Otherwise it is skipped without blocking other
