@@ -1,4 +1,4 @@
-# ![MetaBAW](metabaw_title_logo.png)
+![MetaBAW](metabaw_title_logo.png)
 
 <p align="justify">
 Genome-resolved metagenomics requires coordination among tools for sequence mapping, contig binning, bin refinement, genome quality assessment, dereplication and downstream analysis. Differences in software environments, input formats, parameter settings and database requirements complicate workflow implementation and reproducibility. MetaBAW addresses this practical challenge by connecting these procedures within a unified workflow that accepts quality controlled sequencing reads and optional preassembled contigs. MetaBAW offers three complementary capabilities. First, it supports both short- and long-read inputs, accommodating different sequencing platform. Second, it enables single sample assembly, multi sample processing and grouped coassembly while integrating multiple complementary binning tools. Third, it combines MAG quality control and dereplication with taxonomic assignment, abundance profiling, functional annotation and niche classification, providing coordinated outputs for genome-resolved ecological analysis.
@@ -45,11 +45,12 @@ metabaw bin \
   -o metabaw_result
 ```
 
+<p align="justify">
 Omit `--input_contig_files` to assemble all samples from reads. In the default
 assembly strategy, samples missing from a partial contig manifest are assembled
 individually. For long reads, choose the appropriate Flye/Minimap2 input mode;
 for example, add `--nano-hq` for high-quality ONT reads.
-
+</p>
 
 After binning succeeds, create an annotation input list from the final MAGs:
 
@@ -64,6 +65,7 @@ metabaw annotation \
   -o metabaw_annotation_result
 ```
 
+<p align="justify">
 This example uses the default MAG suffix `fa`; adjust the `find` pattern if
 binning used another `--mag-suffix`. Absolute MAG paths avoid ambiguity when
 moving the list. Annotation enables taxonomy, abundance and all three functional
@@ -72,13 +74,11 @@ four MAGs and four read samples. Newly generated GTDB-Tk classification requires
 a configured memory budget of at least 160 GiB; this is a preflight floor, not
 a prediction of peak memory. See [taxonomy and abundance](#taxonomy-and-abundance)
 for reuse of existing taxonomy and ways to disable optional annotation branches.
+</p>
 
 ## Requirements and installation
 
-Use Linux, WSL2, or an HPC Linux environment for production runs. MetaBAW
-requires Python 3.11. External bioinformatics programs and reference databases
-are not bundled in the wheel.
-
+<p align="justify">
 Conda, Mamba or Micromamba is needed for the isolated tool environments.
 [Miniforge](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html)
 provides both Conda and Mamba. CPU execution is supported; NVIDIA GPUs
@@ -86,12 +86,15 @@ additionally require a working driver and compatible CUDA/PyTorch or CuPy
 runtimes. Reserve adequate
 RAM, database storage and temporary disk space for the selected tools. The
 160 GiB GTDB-Tk classification floor does not apply to every binning task.
+</p>
 
 ### Install a release wheel
 
+<p align="justify">
 Obtain `metabaw-0.1.0-py3-none-any.whl` and its matching `SHA256SUMS` from the
 provided release distribution or the repository's Releases page, when available.
 Keep both files in the same directory and verify the wheel before installation:
+</p>
 
 ```bash
 sha256sum -c SHA256SUMS
@@ -120,6 +123,7 @@ metabaw --version
 metabaw --help
 ```
 
+<p align="justify">
 For package transactions, `mamba create`, `mamba install` and `mamba update`
 can replace the corresponding Conda commands while keeping the same environment,
 package versions and channels. `conda activate` also works for environments
@@ -127,6 +131,7 @@ created by Mamba in the same installation. If your shell is initialized for
 Mamba, you can use `mamba activate metabaw` instead. See the
 [official Mamba user guide](https://mamba.readthedocs.io/en/latest/user_guide/mamba.html).
 Install the MetaBAW wheel with `python -m pip install` as shown above.
+</p>
 
 To replace an existing installation of this edition:
 
@@ -135,9 +140,11 @@ python -m pip install --force-reinstall --no-deps \
   ./metabaw-0.1.0-py3-none-any.whl
 ```
 
+<p align="justify">
 `--no-deps` is appropriate only when the existing environment already satisfies
 the package requirements. Installing a wheel does not install external
 bioinformatics programs or their databases.
+</p>
 
 ### Check dependencies
 
@@ -162,17 +169,21 @@ metabaw annotation -h        # all annotation options
 metabaw check -h             # dependency and database options
 ```
 
+<p align="justify">
 Only `bin`, `annotation`, and `check` are accepted as subcommands.
 The main help lists them under `Module options:`. The former `binning` and
 `checking` names are not accepted. Help output is the complete parameter
 reference; the tables below explain the most important options and constraints.
+</p>
 
 ## Input files
 
+<p align="justify">
 All manifests are UTF-8 text files. Fields must be separated by a real tab
 character, not spaces or the literal characters `\t`. Empty lines and lines
 beginning with `#` are ignored. Relative paths are resolved against the
 directory containing the manifest.
+</p>
 
 ### Read manifest
 
@@ -207,9 +218,11 @@ S2	/data/contigs/S2.fa.gz
 L1	/data/contigs/L1.fasta
 ```
 
+<p align="justify">
 The sample name must exist in the read manifest. Supported FASTA extensions are
 `.fa`, `.fna`, `.fasta`, and their gzip-compressed variants. A partial contig
 manifest is valid: samples without supplied contigs are assembled automatically.
+</p>
 
 ### Genome list for annotation
 
@@ -222,8 +235,10 @@ name column.
 /data/mags/MAG_002.fna.gz
 ```
 
+<p align="justify">
 MAG basenames must be unique after the complete FASTA suffix is removed.
 MetaBAW stages only listed MAGs and does not modify the original files.
+</p>
 
 ### Coassembly manifest
 
@@ -237,10 +252,12 @@ S3	group2
 S4	group2
 ```
 
+<p align="justify">
 Each sample may occur once, and each group must contain at least two samples.
 All samples in one group must have the same read type: all paired short reads or
 all single-file long reads. Group names follow the same naming restrictions as
 sample names. Different groups may use different read types.
+</p>
 
 ### Grouped-coverage list
 
@@ -252,10 +269,12 @@ S2
 S3
 ```
 
+<p align="justify">
 This mode cross-maps the listed reads to each listed sample assembly to obtain
 multi-sample coverage. It does not coassemble the reads. Samples not listed in
 the file remain independent. At least two distinct, known sample names are
 required.
+</p>
 
 ## Binning workflow
 
@@ -270,9 +289,11 @@ metabaw bin \
   -o metabaw_result
 ```
 
+<p align="justify">
 Missing short-read assemblies are generated with MEGAHIT. Missing long-read
 assemblies are generated with `flye --meta`. Flye input modes are mutually
 exclusive:
+</p>
 
 ```text
 --pacbio-raw  --pacbio-corr  --pacbio-hifi
@@ -314,9 +335,11 @@ Default mapping and binner selection depends on the read type:
 | Paired short reads | Bowtie2 | MetaBAT2, MetaDecoder, VAMB | LorBin |
 | Single-file long reads | Minimap2 | MetaDecoder, VAMB, LorBin | MetaBAT2 |
 
+<p align="justify">
 The complete binner set is MetaBAT2, MetaDecoder, VAMB, COMEBin, SemiBin2, and
 LorBin. Explicitly requested but inapplicable binners are recorded in
 `binner_summary.tsv`; they are not treated as execution failures.
+</p>
 
 ### User-defined coassembly
 
@@ -330,10 +353,12 @@ metabaw bin \
   -o metabaw_coassembly_result
 ```
 
+<p align="justify">
 Paired short-read groups are coassembled with MEGAHIT. Long-read groups are
 coassembled with Flye. All group members are mapped separately to the group
 assembly to provide differential coverage. Samples not present in the
 coassembly manifest follow the normal per-sample workflow.
+</p>
 
 The coassembly FASTA is named:
 
@@ -352,11 +377,13 @@ combined with `--multi-files`.
 
 ### Refinement and quality control
 
+<p align="justify">
 `04.export_refined_bins` exports the refined MAG FASTA files and their manifest
 after `04.refine.<tool>`. For MAGScoT it extracts sequences using the refined
 contig-to-bin mapping; for DAS Tool and MetaWRAP it normalizes their FASTA
 exports. This is not another binning run and is not final `--tag-contigs`
 renaming. Existing `04.bins.*` checkpoints remain compatible with the new name.
+</p>
 
 Important binning options include:
 
@@ -385,16 +412,20 @@ Important binning options include:
 | `--retries` | Retries for eligible failed tasks; LorBin is excluded from automatic retry | `0` |
 | `--advanced-arg TOOL=ARGS` | Repeatable expert arguments for a supported downstream tool | not set |
 
+<p align="justify">
 Bowtie2 cannot process long-read entries, and miniBWA cannot process paired
 short-read entries. For mixed projects, omit `--align-tool` for per-sample
 defaults or use Minimap2. `--environment` selects a SemiBin2 model, not a Conda
 environment. `--tag-contigs` runs after dereplication (`07.tag_contigs`); it does
 not change the preparation, mapping or binning contig IDs.
+</p>
 
+<p align="justify">
 MetaWRAP accepts results from at most three applicable binning tools per
 analysis. For example, use `--tools metadecoder vamb semibin2 --refinement
 metawrap`. Select MAGScoT or DAS Tool when combining more than three binners.
 MetaBAW rejects an oversized MetaWRAP selection before workflow tasks start.
+</p>
 
 Native refinement thresholds are distinct from the final quality filter:
 
@@ -405,6 +436,7 @@ Native refinement thresholds are distinct from the final quality filter:
 | MetaWRAP | CheckM2 | `--com` x 0.8 / `--con` x 1.2 |
 | DAS Tool | CheckM or CheckM2 | Native scoring settings unchanged; these two options are not forwarded |
 
+<p align="justify">
 The 20% adjustment is relative, not a change of 20 percentage points;
 contamination is capped at 100%. For example, `--com 50 --con 10` gives
 40%/12% for MAGScoT or MetaWRAP followed by CheckM2. Final selection uses the
@@ -414,7 +446,9 @@ contamination <= `--con` (50% and 10% in this example).
 still uses native CheckM during refinement; when CheckM2 is selected, MetaBAW
 runs CheckM2 on the refined candidates for final quality assessment. When
 CheckM is selected, MetaBAW reuses MetaWRAP's CheckM estimates.
+</p>
 
+<p align="justify">
 MAGScoT receives the adjusted fractions through `--threshold` and
 `--max_cont`; its native `--threshold` also affects score-based selection.
 MetaWRAP receives adjusted percentages through `-c` and `-x`; its expected
@@ -422,13 +456,17 @@ bins directory and CheckM stats filename use these same effective values.
 Startup logs and `run_manifest.json` record both refinement and final QC
 thresholds. Changing refinement thresholds may trigger one refinement rerun;
 unchanged upstream mapping, binning and marker searches remain reusable.
+</p>
 
+<p align="justify">
 All three refiners can produce a valid zero-bin result. MetaBAW accepts it only
 with tool-specific evidence: current scores and an explicit no-bin message for
 MAGScoT; consistent native logs and bin evaluations for DAS Tool; or a successful
 MetaWRAP exit, final bins directory and valid header-only final CheckM table.
 Native failures, malformed tables and unexplained missing outputs still fail.
+</p>
 
+<p align="justify">
 A validated empty sample contributes zero refined MAGs, has completion evidence
 for resume, and does not stop other samples under `--failure-policy strict`.
 Rejected source bins are never substituted into the catalogue and thresholds
@@ -436,17 +474,22 @@ are not relaxed further. Original bins remain under `bin_files/`. If all samples
 are empty, collection stops with `No refined FASTA bins were collected` before
 QC. Native MAGScoT output is also retained in
 `<tmp>/work/refinement/<sample>/magscot.native.log`.
+</p>
 
+<p align="justify">
 In `quality_control_files/rna_quality.tsv`, `pass` is `Not filtered` when
 neither `--trna-pass` nor `--rrna-pass` is enabled. RNA predictions and tool
 errors are still reported; this status does not claim that a MAG has complete
 RNA genes. When at least one RNA filter is enabled, `pass` remains `true` or
 `false` according to the requested filters only. Report-only results do not
 exclude MAGs from downstream quality filtering.
+</p>
 
+<p align="justify">
 `--failure-policy strict` is the default and stops new work after a required
 binner chain fails. `--failure-policy best-effort` continues with other
 successful binners.
+</p>
 
 ### Binning output
 
@@ -465,9 +508,12 @@ metabaw_result/
 `-- tmp/
 ```
 
+<p align="justify">
 Independent bins use `<sample>_<binner-or-refiner>_<number>.fa`. Final
 dereplicated MAGs are written under `non_redundant_bins/`.
+</p>
 
+<p align="justify">
 `quality_control_files/quality_summary.tsv` retains every candidate's quality
 assessment. Its `selected` column records quality-filter selection, while
 `dereplication_pass` records the subsequent Galah/dRep representative selection:
@@ -477,12 +523,15 @@ dereplication. Quality-selected rows show `Pending` until the dereplication repo
 has completed; a failed dereplication is not reported as a completed rejection.
 On resume, the report can update older summaries using existing representative
 FASTAs without changing the binning or dereplication commands.
+</p>
 
 ### Interpreting quality reports
 
+<p align="justify">
 `quality_control_files/candidate_bins/` contains all refined candidates;
 `filtered_bins/` contains quality-selected MAGs before dereplication. The final
 catalogue is `non_redundant_bins/`. A quality pass is not a dereplication pass.
+</p>
 
 | `quality_summary.tsv` column | Meaning |
 |---|---|
@@ -495,6 +544,7 @@ catalogue is `non_redundant_bins/`. A quality pass is not a dereplication pass.
 | `reason` | `pass` or semicolon-separated reasons for exclusion, such as `low_completeness` or `gunc_failed` |
 | `dereplication_pass` | `TRUE`, `FALSE`, `Not evaluated`, or `Pending`, as described above |
 
+<p align="justify">
 GUNC is optional, but `--gunc` applies its evaluable failures as a quality filter.
 `unscored` means there is no usable pass/fail call: this includes reference
 representation scores below 0.3, unavailable/invalid calls, or a missing MAG
@@ -502,13 +552,16 @@ entry in an otherwise populated GUNC summary. An evaluated MAG can therefore
 have GUNC results yet remain `unscored`. By default it is not excluded solely
 for that status; do not interpret it as a demonstrated GUNC pass. `not_run`
 indicates that no populated GUNC results were used for the summary.
+</p>
 
+<p align="justify">
 `rna_quality.tsv` reports `genome`, `domain`, `trna_types`, `rrna_5S`,
 `rrna_16S`, `rrna_23S`, `pass`, and `error`. `trna_types` counts distinct types,
 not total tRNA copies. Check the `error` field even in report-only mode. A MAG
 passing the configured completeness/contamination filter is not automatically
 a high-quality MIMAG genome; RNA and other applicable reporting criteria must
 be assessed separately.
+</p>
 
 ## Annotation workflow
 
@@ -521,7 +574,7 @@ metabaw check --scope annotation \
   --dbcan-db /db/dbcan \
   --hydrogenase-db /db/hydrogenase
 ```
-
+  
 All four values above are **database root directories**. They must contain the
 unpacked files described in [Databases and reference assets](#databases-and-reference-assets).
 
@@ -550,28 +603,36 @@ The annotation module performs:
 7. Hydrogenase annotation with HydDB searches.
 8. Hydrogen-metabolism terminal-enzyme annotation with DIAMOND.
 
+<p align="justify">
 KEGG, CAZy, and hydrogen-metabolism annotation are enabled by default. Disable
 them with `--no-kegg`, `--no-cazy`, or `--no-hyd`, respectively. `--no-hyd`
 disables both hydrogenase and terminal-enzyme annotation.
+</p>
 
+<p align="justify">
 The KEGG table retains each assigned KO in `Gene`. If an assigned KO has no
 entry in the configured `K.descript.txt`, its `KO_gene_name` and
 `KO_description` are both `NA`; the task log lists how many KO descriptions
 were missing. A missing or invalid description file remains an error.
+</p>
 
 ### Taxonomy and abundance
 
+<p align="justify">
 GTDB-Tk species placement is enabled by default and can be disabled with
 `--no-place-species`, the only public species-placement switch.
 A complete existing GTDB-Tk result can be reused with:
+</p>
 
 ```bash
 --gtdbtk_res /path/to/gtdbtk_result
 ```
 
+<p align="justify">
 MetaBAW validates that the supplied result contains one consistent
 classification for every input MAG before skipping GTDB-Tk. `--gtdbtk_res` and
 `--gtdbtk-db` are mutually exclusive.
+</p>
 
 Additional annotation controls include:
 
@@ -589,36 +650,45 @@ Supported abundance methods are:
 relative_abundance  rpkm  tpm  mean
 ```
 
+<p align="justify">
 Each read sample is profiled against all listed MAGs. Taxonomic ranks are added
 to the merged abundance tables. CoverM uses 95% minimum read identity and 75%
 minimum aligned read length. Relative abundance and mean coverage use a 10%
 minimum covered genome fraction; RPKM, TPM and internal read counts use a
 separate zero-covered-fraction pass because those estimators do not calculate
 covered bases in the same way.
+</p>
 
+<p align="justify">
 Relative abundance is expressed in percent, RPKM is reads per kilobase per
 million reads, TPM is transcripts per million as implemented by CoverM for read
 profiling, and `mean` is mean coverage depth. These are metagenomic read-based
 metrics, not direct measurements of transcription. Only requested methods have
 individual output matrices. A CoverM `unmapped` row is not a MAG and must be
 excluded from genome counts.
+</p>
 
 ### Niche classification
 
+<p align="justify">
 Niche classification runs only when the analysis contains at least four MAGs
 and four read samples. Otherwise it is skipped without blocking other
 annotation steps. Use `--no-niche` to disable it explicitly.
+</p>
 
 Two criteria are supported:
 
 - `--niche_classify_method cv`: ranked CV quartiles (default).
 - `--niche_classify_method occupancy`: sample-occupancy classification.
 
+<p align="justify">
 The default taxonomic rank is `family`, and the default abundance input is
 `relative_abundance`. The selected niche abundance must also be included in
 `--methods`. The decision, input counts, criterion, and abundance scale are
 recorded in `niche_status.log` and niche provenance.
+</p>
 
+<p align="justify">
 In `cv` mode, supported taxa at the selected rank are sorted by `raw_si_cv`
 from low to high by default. Add `--cv-correct` to sort by `corrected_si`
 instead. For taxon abundance values `a_1, ..., a_K` across all K samples,
@@ -627,7 +697,9 @@ including zeros, the raw CV is the sample standard deviation (denominator
 same taxon are summed before calculating this statistic. A positive mean,
 at least 20 total assigned reads and a finite selected CV are required for
 ranking; CV mode does not impose a minimum occupancy.
+</p>
 
+<p align="justify">
 The optional correction is `corrected_si = raw_si_cv - sqrt(K/R)`, where R is
 the total read count assigned to that taxon across samples. R is the read-count
 quantity called N in the diagnostic column `expected_si_bias_sqrt_K_over_N`;
@@ -644,7 +716,9 @@ supported taxa therefore produce only intermediate labels. Low-support taxa
 remain `unclassified_low_support` and are excluded from the ranked population.
 Taxa with identical CVs can receive different labels at a rank boundary: this
 is the explicit stable tie-breaking policy, not a difference in their CVs.
+</p">
 
+<p align="justify">
 `--cv-correct` is disabled unless explicitly supplied and is valid only with
 `--niche_classify_method cv`. Without this flag, `corrected_si` is diagnostic
 only. `community_mean_corrected_si` never determines the classification.
@@ -654,7 +728,9 @@ otherwise `FALSE`, including rows with insufficient support. The classification
 table no longer includes `core_datasets`, `required_core_datasets`, or any
 `prevalence::<dataset>` columns. Occupancy calculations retain their original
 algorithm internally.
+</p>
 
+<p align="justify">
 The table records the one-based `cv_quartile_rank` and observed tail-boundary
 values of the selected raw or corrected CV; `provenance.json` records the
 selected ranking value, population size, tail quotas, rounding and tie-breaking
@@ -663,7 +739,9 @@ These are relative labels within the supplied catalogue and sample cohort,
 not independently validated absolute ecological categories. The equal-tail
 group sizes follow the classification rule; they are not independent evidence
 of ecological specialization.
+</p>
 
+<p align="justify">
 In `occupancy` mode, a taxon is detected at a relative abundance of at least
 0.01% and greater than zero in a sample. For other abundance metrics, detection
 uses `100 x taxon abundance / total catalogue abundance` within each sample;
@@ -672,6 +750,7 @@ at least 20 assigned reads and occupancy of at least 20% of samples. The current
 CLI treats all samples as one dataset: occupancy >= 80% gives `generalist`,
 otherwise `specialist`. This mode does not produce `intermediate`; use CV mode
 for three-category classification.
+</p>
 
 Key `niche_classification.tsv` fields are:
 
@@ -690,17 +769,21 @@ Key `niche_classification.tsv` fields are:
 | `cv_quartile_rank` | One-based position in the selected CV ranking; `NA` when not applicable |
 | `cv_low_tail_max`, `cv_high_tail_min` | Observed CV values at the ranked tail boundaries, not interpolated percentile estimates |
 
+<p align="justify">
 The output retains the current `raw_si_cv` and `corrected_si` field names.
 `genome_to_taxon.tsv` maps each MAG to its taxon and niche; `taxon_abundance.tsv`
 contains the aggregated abundances and internal counts. These mappings do not
 establish that every member MAG has the same independently measured niche.
+</p>
 
+<p align="justify">
 All niche modes use versioned completion markers so resume regenerates old
 table schemas instead of silently reusing them. Unchanged taxonomy and
 abundance tasks can still be reused when their outputs exist. Changing
 `--cv-correct` for an existing output directory is rejected, like changing the
 niche method or abundance metric: use a new `-o` directory to keep both runs
 and avoid stale classifications.
+</p>
 
 ### Functional annotation outputs
 
@@ -714,9 +797,11 @@ hydrogenase/hydrogenase_annotations.tsv
 terminal_enzymes/terminal_enzyme_annotations.tsv
 ```
 
+<p align="justify">
 The tables share stable MAG, contig, and gene identifier columns, followed by
 method-specific evidence. Native combined-search output is retained for
 provenance.
+</p>
 
 | Common column | Meaning |
 |---|---|
@@ -726,13 +811,16 @@ provenance.
 | `MAG_contig_gene_id` | MAG-contig-gene identifier; use with `MAG` to count unique genes |
 | `Gene` | Assigned KO, CAZyme label, hydrogenase type or terminal-enzyme class; not the unique gene identifier |
 
+<p align="justify">
 KEGG additionally reports `KO_gene_name` and `KO_description`; an assigned KO
 with missing description fields remains an assignment. CAZyme evidence follows
 the installed run_dbCAN output schema. Count genes using distinct
 `(MAG, MAG_contig_gene_id)` pairs rather than annotation rows, and exclude
 unassigned/`Unclassified` records when counting assigned functions. One gene
 may have multiple assignments or occur in more than one annotation branch.
+</p>
 
+<p align="justify">
 Hydrogenase searches use BLASTP against `hyddb.all.fa` with E-value <= `1e-50`,
 then retain qualifying hits with identity >= 0.50 and query coverage >= 0.90.
 `HydDB_subject` and `HydDB_group` identify the matched reference and its group.
@@ -740,9 +828,12 @@ then retain qualifying hits with identity >= 0.50 and query coverage >= 0.90.
 FeFe candidates require an additional DIAMOND hit to `FeFe.dmnd` at the same
 E-value cutoff; its evidence is reported in `FeFe_subject`, `FeFe_identity`,
 `FeFe_evalue` and `FeFe_bitscore`. Those fields are blank for non-FeFe rows.
+</p>
 
+<p align="justify">
 Terminal-enzyme searches use DIAMOND against `Terminal.dmnd`, E-value <=
 `1e-50` and query coverage >= 0.80, followed by enzyme-specific identity cutoffs:
+</p>
 
 | Identity minimum | Enzyme classes |
 |---|---|
@@ -753,8 +844,10 @@ Terminal-enzyme searches use DIAMOND against `Terminal.dmnd`, E-value <=
 | `0.40` | RHO |
 | `0.50` | Other classes not listed above |
 
+<p align="justify">
 The best qualifying terminal-enzyme hit is retained per protein; `Reference`,
 `Reference_title` and `Required_identity` expose the match and applied cutoff.
+</p>
 
 ### Annotation output
 
@@ -788,6 +881,7 @@ metabaw_annotation_result/
 
 ### CPU scheduling
 
+<p align="justify">
 `-t/--threads` is the total workflow CPU budget. `--task` is the maximum number
 of samples or MAGs processed concurrently. MetaBAW divides the total thread
 budget across active sample slots; it does not multiply `-t` by `--task`.
@@ -804,14 +898,18 @@ task reserves that full budget, so global assessments do not each run with
 MAGs, not original samples. Single-threaded collection, export and report
 helpers still reserve one CPU. MetaWRAP with CheckM reuses its refinement
 quality reports without a redundant global CheckM run.
+</p>
 
+<p align="justify">
 Independent samples and distinct coassembly groups can assemble concurrently
 up to `--task`. Each assembler uses its allocated sample thread/RAM share.
 MEGAHIT's graph memory budget uses 90% of that RAM share, leaving room for
 other allocations; the combined process-tree memory guard remains active.
+</p>
 
 ### System memory
 
+<p align="justify">
 `--max-memory` is the combined workflow memory limit in GiB. Its default is the
 detected machine memory, constrained by a smaller readable Linux cgroup limit.
 For binning, requests exceeding 80% of currently available RAM are reduced
@@ -822,9 +920,11 @@ slots. A cohort-wide task reserves the shared budget and waits for other
 reservations to finish. External memory use can further reduce admission
 budgets while the workflow runs. Annotation retains its existing total-limit
 scheduling behavior.
+</p>
 
 ### GPU execution
 
+<p align="justify">
 MetaBAW probes CUDA automatically. Use `--no-gpu` to force CPU execution.
 `--max-gpu-memory` is now an **aggregate workflow VRAM request**, not a
 per-task allowance. The default `100%` requests the combined physical VRAM of
@@ -835,18 +935,22 @@ when available. Several tasks may share a card if their reservations fit.
 Every card also stays within its own 80%-of-free-VRAM ceiling. Equal shares
 may be reduced further to fit heterogeneous cards: one process cannot pool
 the memory of multiple GPUs. GPUs with unknown free VRAM are not used.
+</p>
 
 ## Dependencies and databases
 
+<p align="justify">
 Only components required by the selected analysis are mandatory. Programs not
 listed as isolated below must be executable on the active workflow `PATH`,
 normally through the main `metabaw` environment. MetaBAW resolves the actual
 launcher; an executable found in another environment is not assumed to use the
 main Python runtime. Do not merge incompatible isolated environments into the
 Python 3.11 main environment.
+</p>
 
 ### Software and environments
 
+<p align="justify">
 For supported dependency installation and isolated-environment setup,
 `metabaw check` automatically selects the first available manager on `PATH`
 in this order: **Mamba, Micromamba, Conda**. Use managers from the same
@@ -854,6 +958,7 @@ installation, or select isolated environments by absolute prefix.
 Keep `conda` available for MetaDecoder's automatic CuPy/CUDA runtime repair
 and for saving GTDB-Tk's `GTDBTK_DATA_PATH` in the Conda environment; these
 operations currently call Conda directly.
+</p>
 
 | Function | Programs | Environment / assets |
 |---|---|---|
@@ -881,6 +986,7 @@ metabaw check --metawrap-env metabaw-metawrap-py27
 metabaw check --lorbin-env /shared/conda/envs/metabaw-lorbin-py310
 ```
 
+<p align="justify">
 An absolute prefix avoids ambiguity when multiple Conda installations contain
 environments with the same name. The flags select and validate environments;
 without `--scope`, `--all` or explicit `--essential`, only the explicitly
@@ -889,9 +995,11 @@ If a LorBin environment has the wrong Python
 version, approved repair preserves it and selects a compatible replacement.
 `check --require-cuda` additionally requires usable selected GPU runtimes;
 MetaDecoder is tested with CuPy independently of PyTorch in the main environment.
+</p>
 
 ### Databases and reference assets
 
+<p align="justify">
 `metabaw check` validates database completeness and loading for its selected
 profile and any explicitly supplied database paths. Use `--all` to include
 optional legacy CheckM and GUNC databases. An incomplete database is reported
@@ -899,19 +1007,24 @@ as `[MISSING]` with the failed file/load check, returns a nonzero exit status,
 and is not saved as a validated path. Downloads requested with
 `--install-databases` are rechecked before reporting `[OK]` or saving their
 configuration.
+</p>
 
+<p align="justify">
 Every `bin` and `annotation` invocation rechecks the databases used by its
 selected modules before starting any workflow tasks, including resumed runs.
 Missing, empty, unreadable or incomplete required assets are reported as
 `[MISSING]` in the main output and recorded in `<output>/start_info.txt`; all
 detected dependency failures are collected before the command exits.
+</p>
 
 **What to pass to each option**
 
+<p align="justify">
 These options are configured with `metabaw check`. A directory means the
 unpacked database root containing the required files, rather than the downloaded
 archive or one file inside that root. Replace `/db/...` and `/opt/...` with your
 actual locations; the examples below are absolute Linux paths.
+</p>
 
 | Configuration flag | Input type | Example value |
 |---|---|---|
@@ -924,6 +1037,7 @@ actual locations; the examples below are absolute Linux paths.
 | `--hydrogenase-db` | Directory: hydrogen-metabolism database | `/db/hydrogenase` |
 | `--magscot-dir` | Directory: MAGScoT checkout containing its script and `hmm/` | `/opt/MAGScoT` |
 
+<p align="justify">
 CheckM2 and GUNC ultimately use an individual, nonempty `.dmnd` file. When given
 a directory, MetaBAW searches it recursively and selects the first nonempty
 `.dmnd` file in sorted path order. Prefer the explicit file path, especially if
@@ -931,11 +1045,14 @@ several database releases are present. Unpack `.dmnd.gz` before configuration.
 For GTDB-Tk, select the directory that directly contains `metadata/`, `taxonomy/`
 and the other reference subdirectories, even if an archive creates an extra
 parent directory.
+</p>
 
+<p align="justify">
 `--database-dir`, for example `/db/metabaw`, is a **download destination
 directory** used with `--install-databases`. Supported downloads go into its
 `checkm2/`, `gunc/`, `gtdbtk/`, `kofam/` and `dbcan/` subdirectories; it is not the
 argument value for every database option.
+</p>
 
 **Recommended downloads and required assets**
 
@@ -953,11 +1070,13 @@ names and `.dmnd` filenames can vary by release; use the actual unpacked name.
 | MetaBAW hydrogen-metabolism bundle, including HydDB references | Hydrogenase and terminal-enzyme searches | `hyddb.all.fa` (protein FASTA), `FeFe.dmnd`, `Terminal.dmnd`, `hyd_id-name.script.txt` | [XiangZhouCAS/Hydrogenase_db](https://github.com/XiangZhouCAS/Hydrogenase_db); original hydrogenase reference source: [GreeningLab/HydDB](https://github.com/GreeningLab/HydDB) |
 | Native MAGScoT scripts and marker HMMs | MAGScoT | `MAGScoT.R`, `hmm/gtdbtk_rel207_Pfam-A.hmm`, `hmm/gtdbtk_rel207_tigrfam.hmm` | [Official MAGScoT repository](https://github.com/ikmb/MAGScoT); obtain the script and bundled marker HMMs together |
 
+<p align="justify">
 For KOfam, extract `profiles.tar.gz` into the database root and decompress
 `ko_list.gz` to `ko_list`. Point `--kegg-db` at the parent of `profiles/`, for
 example `/db/kofam`. MetaBAW can generate a missing `K.descript.txt` from the
 `knum` and `definition` columns of `ko_list` during `check`; that database root
 must be writable when this file needs to be generated.
+</p>
 
 For dbCAN, the official downloader prepares the required files together:
 
@@ -966,8 +1085,10 @@ run_dbcan database --db_dir /db/dbcan --aws_s3 --no-cgc
 metabaw check --scope annotation --dbcan-db /db/dbcan
 ```
 
+<p align="justify">
 `--dbcan-db /db/dbcan` selects the whole bundle, including both HMM collections
 and the substrate mapping table; `CAZy.dmnd` is one file inside that directory.
+</p>
 
 **Hydrogenase download and attribution**
 
@@ -1012,9 +1133,11 @@ metabaw check --all \
   --gtdbtk-db /db/gtdb/release232
 ```
 
+<p align="justify">
 Use `check --all` only when preparing the full toolset: it checks components
 not necessarily used by your intended run and may prompt for their installation.
 To download only supported missing databases in a selected profile:
+</p>
 
 ```bash
 metabaw check --scope annotation --install-databases \
@@ -1022,18 +1145,22 @@ metabaw check --scope annotation --install-databases \
   --hydrogenase-db /db/hydrogenase
 ```
 
+<p align="justify">
 The hydrogen-metabolism bundle must already exist at `/db/hydrogenase` in this
 example. Downloaded
 releases are not guaranteed to match an earlier analysis; record and retain the
 actual reference version instead of silently replacing a database in place.
+</p>
 
 ### Saved configuration and precedence
 
+<p align="justify">
 Database paths are saved in `~/.config/metabaw/databases.json`. Runtime
 environment names/prefixes and the MAGScoT directory are saved in
 `~/.config/metabaw/config.json`, unless `XDG_CONFIG_HOME` or
 `METABAW_CONFIG_FILE` relocates that runtime configuration. Database configuration
 does not use those runtime-config overrides.
+</p>
 
 | Database | Environment-variable alternative |
 |---|---|
@@ -1045,22 +1172,28 @@ does not use those runtime-config overrides.
 | dbCAN | `DBCAN_DB` |
 | Hydrogen metabolism | `HYDROGENASE_DB` |
 
+<p align="justify">
 Environment variables use the same input types as the corresponding flags:
 `CHECKM2DB` and `GUNC_DB` preferably point to the actual `.dmnd` files; the
 other database variables point to their unpacked database root directories.
+</p>
 
+<p align="justify">
 Explicit database arguments take precedence. Otherwise, a valid environment
 variable is preferred to a saved path; an invalid environment path can fall
 back to valid saved configuration with a warning. Most database-path flags
 belong to `check`, not `bin` or `annotation`; annotation additionally accepts
 `--gtdbtk-db` directly. Configure other paths before starting the workflow.
+</p>
 
+<p align="justify">
 For isolated environments, `METABAW_COMEBIN_ENV`, `METABAW_CHECKM2_ENV`,
 `METABAW_METAWRAP_ENV` and `METABAW_LORBIN_ENV` override saved settings, which
 override default names. MAGScoT uses `MAGSCOT_DIR`, then its saved directory,
 then `~/.cache/metabaw/MAGScoT`. Update or unset stale overrides when adopting
 new configuration. `check` reports where settings were saved; configuration is
 user-specific and is not automatically transferred by copying an output folder.
+</p>
 
 ## Reports, logs, and reproducibility
 
@@ -1087,15 +1220,19 @@ Internal execution reports are kept with temporary files, not final results:
 - `<tmp>/runtime/resume_diagnostics.json`: reuse/rerun decisions and invalidated
   data dependencies from the latest startup scan; not a final-result report.
 
+<p align="justify">
 `workflow_details.md` describes the planned methods. Use the `execution` section
 of `run_manifest.json` or the temporary summary and task logs to determine
 completion status. On resume, reports left at the top level by older releases
 are moved into the runtime directory; existing diagnostic history is preserved.
+</p>
 
 ## Temporary files and resume behavior
 
+<p align="justify">
 The default temporary directory is `<output>/tmp`. A relative custom path is
 created under the output directory; an absolute path is used directly.
+</p>
 
 ```text
 <tmp>/
@@ -1109,10 +1246,13 @@ created under the output directory; an absolute path is used directly.
     `-- logs/
 ```
 
+<p align="justify">
 Temporary files are retained by default. `--delete-tmp-files` removes them only
 after a successful workflow, including the two internal execution reports.
 Failed runs retain intermediates and logs.
+</p>
 
+<p align="justify">
 Restart an interrupted workflow using the same output and temporary directory,
 or a complete copied/renamed workflow directory. Stop the original run before
 copying its files. Keep `tmp/work`, `tmp/runtime/state.sqlite3`, the task logs
@@ -1120,7 +1260,9 @@ and `run_manifest.json`; then rerun the command with `-o` pointing to the copy.
 No additional resume flag is required. For an absolute external `--tmp-files`,
 retain that workspace or copy it too and specify its new absolute location.
 Do not run two workflows against the same temporary workspace/state database.
+</p>
 
+<p align="justify">
 Output/temp roots are normalized in portable checkpoints. A directory-name
 change does not rebuild complete indexes, BAMs or bins. Copied generated-file
 timestamps are not identity checks in portable resume: their producer tasks,
@@ -1130,6 +1272,7 @@ Internal absolute symlinks and SQLite log locators are rebased into the copied
 tree; external input/database links, sequence data and historical log contents
 are not rewritten. Relative internal links remain relative. The original run
 is not modified. `[RESUME]` reports `relocated` cache hits.
+</p>
 
 Resume decisions distinguish runtime resources from analysis settings:
 
