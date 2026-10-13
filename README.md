@@ -44,7 +44,7 @@ metabaw bin \
 Omit `--input_contig_files` to assemble all samples from reads. In the default
 assembly strategy, samples missing from a partial contig manifest are assembled
 individually. For long reads, choose the appropriate Flye/Minimap2 input mode;
-for example, add `--nano-hq` for high-quality ONT reads. [contig_file_style](###Optional contig manifest)
+for example, add `--nano-hq` for high-quality ONT reads. [contig_file_style](#optional-contig-manifest)
 
 After binning succeeds, create an annotation input list from the final MAGs:
 
