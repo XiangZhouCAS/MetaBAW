@@ -10,6 +10,8 @@ The workflow has three main modules:
 - `metabaw annotation`: taxonomy, MAG abundance, ecological niche classification, KEGG annotation, CAZy annotation, and hydrogen-metabolism annotation.
 - `metabaw check`: check software, runtime environments and databases.
 
+# ![MetaBAW](workflow.png)
+
 ## Contents
 
 - [Quick start](#quick-start)
