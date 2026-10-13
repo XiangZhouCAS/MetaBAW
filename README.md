@@ -4,15 +4,11 @@
 Genome-resolved metagenomics requires coordination among tools for sequence mapping, contig binning, bin refinement, genome quality assessment, dereplication and downstream analysis. Differences in software environments, input formats, parameter settings and database requirements complicate workflow implementation and reproducibility. MetaBAW addresses this practical challenge by connecting these procedures within a unified workflow that accepts quality controlled sequencing reads and optional preassembled contigs. MetaBAW offers three complementary capabilities. First, it supports both short- and long-read inputs, accommodating different sequencing platform. Second, it enables single sample assembly, multi sample processing and grouped coassembly while integrating multiple complementary binning tools. Third, it combines MAG quality control and dereplication with taxonomic assignment, abundance profiling, functional annotation and niche classification, providing coordinated outputs for genome-resolved ecological analysis.
 </p>
 
-The workflow has two main modules:
+The workflow has three main modules:
 
-- `metabaw bin`: assembly, read mapping, binning, bin refinement, MAG
-  quality control and dereplication.
-- `metabaw annotation`: taxonomy, MAG abundance, ecological niche
-  classification, KEGG annotation, CAZy annotation, and hydrogen-metabolism
-  annotation.
-
-Use `metabaw check` to validate/configure dependencies and databases.
+- `metabaw bin`: assembly, read mapping, binning, bin refinement, MAG quality control and dereplication.
+- `metabaw annotation`: taxonomy, MAG abundance, ecological niche classification, KEGG annotation, CAZy annotation, and hydrogen-metabolism annotation.
+- `metabaw check`: check software, runtime environments and databases.
 
 MetaBAW uses explicit sample manifests instead of inferring sample names from
 file names. This makes mixed projects and reproducible reruns easier to audit.
