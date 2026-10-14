@@ -664,7 +664,7 @@ Additional annotation controls include:
 | `--retries` | Retries after an eligible task failure | `0` |
 | `--no-niche` | Disable niche classification | off |
 | `--no-kegg`, `--no-cazy`, `--no-hyd` | Disable the corresponding functional branches | off |
-| --annotation-batch-size N | Maximum MAGs per functional annotation batch; GTDB-Tk batching requires --no-place-species | 5000 |
+| `--annotation-batch-size` `N` | Maximum MAGs per functional annotation batch; GTDB-Tk batching requires --no-place-species | 5000 |
 
 Supported abundance methods are:
 
@@ -807,12 +807,10 @@ establish that every member MAG has the same independently measured niche.
 </p>
 
 <p align="justify">
-All niche modes use versioned completion markers so resume regenerates old
-table schemas instead of silently reusing them. Unchanged taxonomy and
-abundance tasks can still be reused when their outputs exist. Changing
-<code>--cv-correct</code> for an existing output directory is rejected, like changing the
-niche method or abundance metric: use a new <code>-o</code> directory to keep both runs
-and avoid stale classifications.
+Complete niche outputs can be reused during continuation, including a recorded skip
+because fewer than four classified taxa were found. If the niche method, abundance metric,
+--cv-correct or other analysis settings need to be changed, use a new output directory
+to regenerate the results.
 </p>
 
 ### Functional annotation outputs
@@ -912,22 +910,15 @@ metabaw_annotation_result/
 ### CPU scheduling
 
 <p align="justify">
-<code>-t/--threads</code> is the total workflow CPU budget. <code>--task</code> is the maximum number
-of samples or MAGs processed concurrently. MetaBAW divides the total thread
-budget across active sample slots; it does not multiply <code>-t</code> by <code>--task</code>.
-CPU requests are limited to the permitted CPU affinity/cgroup-quota capacity.
-The 80% safety ceiling applies to RAM and VRAM, not CPU threads.
-This division applies to sample-level MEGAHIT/Flye assembly, mapping, binning and
-refinement. After refined MAGs from all samples are collected, CheckM/CheckM2,
-GUNC, GTDB-Tk domain identification, RNA QC and Galah/dRep use the full
-effective workflow thread budget. For example, <code>--threads 128 --task 4</code>
-allocates 32 threads per sample and 128 threads to each global QC or
-dereplication task, provided the available CPU capacity permits 128 threads. Each global
-task reserves that full budget, so global assessments do not each run with
-128 threads simultaneously. RNA QC divides its global budget among candidate
-MAGs, not original samples. Single-threaded collection, export and report
-helpers still reserve one CPU. MetaWRAP with CheckM reuses its refinement
-quality reports without a redundant global CheckM run.
+<code>-t/--threads</code> is the total workflow CPU budget. In annotation,
+<code>--task</code> limits the number of concurrent read samples or functional
+annotation batches; batched gene prediction uses at most this many concurrent MAG
+workers. At each step, CPU and RAM budgets are divided across <code>min(--task,
+incomplete samples or batches)</code>. For example, with <code>-t 128 --task 4</code>,
+four incomplete functional batches receive 32 CPU threads each; two incomplete batches
+receive 64 each, subject to permitted CPU capacity. Whole-cohort GTDB-Tk classification
+and global binning QC/dereplication reserve the total effective budget. The 80% safety
+ceiling applies to available RAM and free VRAM, not CPU threads.
 </p>
 
 <p align="justify">
@@ -1275,15 +1266,13 @@ Do not run two workflows against the same temporary workspace/state database.
 </p>
 
 <p align="justify">
-Output/temp roots are normalized in portable checkpoints. A directory-name
-change does not rebuild complete indexes, BAMs or bins. Copied generated-file
-timestamps are not identity checks in portable resume: their producer tasks,
-analysis settings, data dependencies and complete expected outputs determine
-reuse. External input paths, sizes and modification times remain checked.
-Internal absolute symlinks and SQLite log locators are rebased into the copied
-tree; external input/database links, sequence data and historical log contents
-are not rewritten. Relative internal links remain relative. The original run
-is not modified. <code>[RESUME]</code> reports <code>relocated</code> cache hits.
+MetaBAW checks each step immediately before execution and reuses complete expected result files.
+Complete downstream results are retained when an upstream step needs to rerun. Private annotation
+intermediates can be skipped when the corresponding final public or batch result tables are complete.
+A failed or interrupted task may still be reused if its expected outputs are complete. Runtime
+budgets and old command/hash/timestamp differences do not by themselves force complete outputs to rerun.
+Changed analysis settings require a fresh output directory to regenerate complete results.
+Database preflight and output/temp workspace locks remain active.
 </p>
 
 Resume decisions distinguish runtime resources from analysis settings:
